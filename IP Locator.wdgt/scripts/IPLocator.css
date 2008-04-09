@@ -17,7 +17,6 @@
 	font: bold 10px/1.2em "Lucida Grande", Sans-Serif;
 	color: white;
 	text-shadow: black 0 0 3px;
-/*	background: url(../images/backside.png);*/
 	background: url(../Default.png);
 	display: none;
 }
@@ -104,6 +103,7 @@ form {
 	top: 16px;
 	left: 22px;
 	width: 185px;
+	text-align: center;
 }
 
 #copyright {
@@ -184,4 +184,5 @@ form {
 	position: absolute;
 	top: 46px;
 	left: 90px;
+	vertical-align: bottom;
 }

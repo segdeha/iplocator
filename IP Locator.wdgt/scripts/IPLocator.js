@@ -14,29 +14,19 @@ http://andrew.hedges.name/resume/
 */
 
 // declare global variables
-//	var debug = true;
-var debug = false;
+var ipObj, msgObj, countryObj, flagObj, cityObj, currencyObj, ipURL, locatorURL, locationHTML, currentMsg, ipRgxp, hnRgxp, flags, msgs;
 
-var ipObj;
-var msgObj;
-var countryObj;
-var flagObj;
-var cityObj;
-var currencyObj;
-
-var ipURL		= 'http://www.whatismyip.com/';
-//var locatorURL	= 'http://www.dnsstuff.com/tools/widget.ch?ip=';
-var locatorURL	= 'http://api.hostip.info/?position=true&ip=';
-var locationHTML;
-var currentMsg;
+ipURL		= 'http://www.whatismyip.com/automation/n09230945.asp';
+//locatorURL	= 'http://www.dnsstuff.com/tools/widget.ch?ip=';
+locatorURL	= 'http://api.hostip.info/?position=true&ip=';
 
 // IP and hostname regular expressions
-var ipRgxp = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/;
-var hnRgxp = /((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/;
+ipRgxp = /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/;
+hnRgxp = /((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/;
 
-var flags = ' ad ae af ag ai al am  an ao aq ar as at au aw az ba bb bd be bf bg bh bi bj bm bn bo br bs bt bv bw by bz ca cd cf cg ch ci ck cl cm cn co cr cu cv cy cz de dj dk dm do dz ec ee eg er es et eu fi fj fk fm fo fr ga gb gd ge gh gi gl gm gn gp gq gr gt gu gw gy hk hm hn hr ht hu id ie il im in io iq ir is it je jm jo jp ke kg kh ki km kn kp kr kw ky kz la lb lc li lk lr ls lt lu lv ly ma mc md mg mh mk ml mm mn mo mp mq mr ms mt mu mv mw mx my mz na nc ne nf ng ni nl no np nr nz om pa pe pf pg ph pk pl pm pr ps pt pw py qa re ro ru rw sa sb sc sd se sg si sk sl sm sn so sr st sv sy sz tc td tf tg th tj tm tn to tp tr tt tv tw tz ua ug uk um us uy uz va vc ve vg vi vn vu ws ye yu za zm zr zw ';
+flags = ' ad ae af ag ai al am  an ao aq ar as at au aw az ba bb bd be bf bg bh bi bj bm bn bo br bs bt bv bw by bz ca cd cf cg ch ci ck cl cm cn co cr cu cv cy cz de dj dk dm do dz ec ee eg er es et eu fi fj fk fm fo fr ga gb gd ge gh gi gl gm gn gp gq gr gt gu gw gy hk hm hn hr ht hu id ie il im in io iq ir is it je jm jo jp ke kg kh ki km kn kp kr kw ky kz la lb lc li lk lr ls lt lu lv ly ma mc md mg mh mk ml mm mn mo mp mq mr ms mt mu mv mw mx my mz na nc ne nf ng ni nl no np nr nz om pa pe pf pg ph pk pl pm pr ps pt pw py qa re ro ru rw sa sb sc sd se sg si sk sl sm sn so sr st sv sy sz tc td tf tg th tj tm tn to tp tr tt tv tw tz ua ug uk um us uy uz va vc ve vg vi vn vu ws ye yu za zm zr zw ';
 
-var msgs = new Array();
+msgs = [];
 
 // status messages
 msgs["default"]			= '<div class="message">Enter an IP address above<\/div>';
@@ -53,36 +43,38 @@ msgs["error"]			= '<div class="error">Error: Unknown Error<\/div>';
 msgs["nomatch"]			= '<div class="error">Error: No match<\/div>';
 
 function init() {
-	if (debug) document.getElementById("debug").style.display = "block";
+	var button;
 	
 	ipObj		= getObj('ip');
 	msgObj		= getObj('msg');
 	countryObj	= getObj('country');
 	flagObj		= getObj('flag');
 	cityObj		= getObj('city');
-	currencyObj	= getObj('currency');
+	googleObj	= getObj('google-map');
 	
 	displayMsg('default');
 	
 	// get IP
 	loadXML(ipURL);
 	
-	createGenericButton(document.getElementById('doneButton'), 'Done', null);
+	button = new AppleGlassButton(getObj('doneButton'), 'Done', hideBack);
 }
 
 function locateIt() {
+	var ip, isValid, url;
+	
 	displayMsg('loading');
 	
-	countryObj.innerHTML	= '';
-	cityObj.innerHTML		= '';
-	flagObj.src				= 'images/flags/-.gif';
-	currencyObj.innerHTML	= '';
+	countryObj.innerHTML = '';
+	cityObj.innerHTML    = '';
+	flagObj.src          = 'images/flags/-.gif';
+	googleObj.innerHTML  = '';
 	
-	var ip = ipObj.value;
-	var isValid = validateIP(ip);
+	ip = ipObj.value;
+	isValid = validateIP(ip);
 	
 	if (isValid) {
-		var url = locatorURL + ip;
+		url = locatorURL + ip;
 		loadXML(url);
 	} else {
 		// not a valid IP address
@@ -91,21 +83,22 @@ function locateIt() {
 }
 
 function loadXML(url) {
+
+	DEBUG.writeDebug('loadXML: url = ' + url);
+
 	xmlRequest = new XMLHttpRequest();
 	xmlRequest.onreadystatechange = processRequestChange;
 	xmlRequest.url = url;
-	xmlRequest.open('GET',url,true);
+	xmlRequest.open('GET', url, true);
 	xmlRequest.setRequestHeader('Cache-Control', 'no-cache');
 	xmlRequest.send(null);
 }
 
-function processRequestChange() {	
+function processRequestChange() {
 	if (null == xmlRequest.readyState) return;
 	if (xmlRequest.readyState == 4) {
-		if (xmlRequest.status == 200) {		
-			if (debug) writeDebug('xmlRequest.url = '+xmlRequest.url);
-			
-			if (xmlRequest.url.indexOf('dnsstuff') > -1) {
+		if (xmlRequest.status == 200) {
+			if (xmlRequest.url.indexOf('hostip') > -1) {
 				parseLocation();
 			} else { // xmlRequest.url == ipURL
 				parseIP();
@@ -117,33 +110,71 @@ function processRequestChange() {
 	}
 }
 
+/*
+<?xml version="1.0" encoding="ISO-8859-1" ?>\n<HostipLookupResultSet version="1.0.0" xmlns="http://www.hostip.info/api" xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.hostip.info/api/hostip-1.0.0.xsd">\n <gml:description>This is the Hostip Lookup Service</gml:description>\n <gml:name>hostip</gml:name>\n <gml:boundedBy>\n  <gml:Null>inapplicable</gml:Null>\n </gml:boundedBy>\n <gml:featureMember>\n  <Hostip>\n   <gml:name>(Unknown City?)</gml:name>\n   <countryName>(Unknown Country?)</countryName>\n   <countryAbbrev>XX</countryAbbrev>\n   <!-- Co-ordinates are unavailable -->\n  </Hostip>\n </gml:featureMember>\n</HostipLookupResultSet>
+
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<HostipLookupResultSet version="1.0.0" xmlns="http://www.hostip.info/api" xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.hostip.info/api/hostip-1.0.0.xsd">
+ <gml:description>This is the Hostip Lookup Service</gml:description>
+ <gml:name>hostip</gml:name>
+ <gml:boundedBy>
+  <gml:Null>inapplicable</gml:Null>
+ </gml:boundedBy>
+ <gml:featureMember>
+  <Hostip>
+   <gml:name>Caracas</gml:name>
+   <countryName>VENEZUELA</countryName>
+   <countryAbbrev>VE</countryAbbrev>
+   <!-- Co-ordinates are available as lng,lat -->
+   <ipLocation>
+    <gml:PointProperty>
+     <gml:Point srsName="http://www.opengis.net/gml/srs/epsg.xml#4326">
+      <gml:coordinates>-67.0333,10.4667</gml:coordinates>
+     </gml:Point>
+    </gml:PointProperty>
+   </ipLocation>
+  </Hostip>
+ </gml:featureMember>
+</HostipLookupResultSet>
+*/
+
 function parseLocation() {
+	var regexs, coordsNA, unknownCountry, txt, country, countrycode, city, latitude, longitude, flag;
+	
+	regexs = {
+		country     : /countryName>(.*)<\/countryName/,
+		countrycode : /countryAbbrev>(.*)<\/countryAbbrev/,
+		city        : /<Hostip>\s*<gml:name>(.*)<\/gml:name>\s*<countryName>/,
+		latLng      : /gml:coordinates>(.*)<\/gml:coordinates/
+	};
+	
+	coordsNA       = 'Co-ordinates are unavailable';
+	unknownCountry = 'Unknown Country?';
+	
 	displayMsg('loaded');
 	
-	if (null == xmlRequest.responseXML) {
+	if ('' === xmlRequest.responseText) {
 		displayMsg('emptyfeed');
 	} else {
-		xml = xmlRequest.responseXML;
-		
-		error = xml.getElementsByTagName('error');
-		
-		// is there an error tag?
-		if (error.length > 0) {
+		txt = xmlRequest.responseText;
+		if (txt.indexOf(unknownCountry) > -1) {
 			// error
 			displayMsg('nomatch');
 		} else {
-			country		= xml.getElementsByTagName('countryName')[0].firstChild.nodeValue;
-			countrycode	= xml.getElementsByTagName('countryAbbrev')[0].firstChild.nodeValue;
-			city		= xml.getElementsByTagName('gml:name')[0].firstChild.nodeValue;
-//			currency	= xml.getElementsByTagName('currency')[0].firstChild.nodeValue;
-				latitude	= xml.getElementsByTagName('gml:coordinates')[0].firstChild.nodeValue.split(',')[0];
-				longitude	= xml.getElementsByTagName('gml:coordinates')[0].firstChild.nodeValue.split(',')[1];
+			country = txt.match(regexs.country)[1];
+			countrycode = txt.match(regexs.countrycode)[1];
+			city = txt.match(regexs.city)[1];
 			
-			if (country[0].firstChild) {
+			if (txt.indexOf(coordsNA) < 0) {
+				latitude  = txt.match(regexs.latLng)[1].split(',')[0];
+				longitude = txt.match(regexs.latLng)[1].split(',')[1];
+			}
+			
+			if (country) {
 				countryObj.innerHTML = country;
 				if (countrycode) {
 					countryObj.innerHTML += ' (' + countrycode + ')';
-					var flag = countrycode.toLowerCase();
+					flag = countrycode.toLowerCase();
 					if (flags.indexOf(' '+flag+' ') > -1) {
 						flagObj.src = 'images/flags/' + countrycode.toLowerCase() + '.gif';
 					} else {
@@ -154,42 +185,25 @@ function parseLocation() {
 				countryObj.innerHTML = 'No match';
 			}
 			
-			cityObj.innerHTML		= (city)? city : 'No Match';
-//			currencyObj.innerHTML	= (currency[0].firstChild)? currency[0].firstChild.nodeValue : 'No Match';
+			cityObj.innerHTML   = city || 'No Match';
+			
+			if (latitude && longitude) {
+				googleObj.innerHTML = '<span class="link" onclick="gotoURL(\'http://maps.google.com/maps?q=' + longitude + ',' + latitude + '\');">Go here on Google Maps</span>';
+			} else {
+				googleObj.innerHTML = '';
+			}
 		}
 	}
 }
 
 function parseIP() {
+	var ip;
 	if (null == xmlRequest.responseText) {
 		displayMsg('emptyfeed');
 	} else {
-		html = xmlRequest.responseText;
-		
-		// <TITLE>Your IP Is 64.106.63.218 WhatIsMyIP.com</TITLE>
-		// <TITLE>Your IP  - 66.193.204.253 WhatIsMyIP.com</TITLE>
-		
-		start = html.indexOf('<TITLE>');
-		if (start < 0) start = html.indexOf('<title>');
-		
-		end = html.indexOf('<\/TITLE>');
-		if (end < 0) end = html.indexOf('<\/title>');
-		
-		titleString = html.substring(start,end);
-		
-//		alert("titleString = "+titleString);
-//		alert("ipRgxp = "+ipRgxp);
-		
-		var ip = titleString.match(ipRgxp);
-		
-//		alert('ip = '+ip);
-		
-//		if (!ip) ip = titleString.match(hnRgxp);
-		
-//		var ip = html.substring(start+18,end);
-		
-		if (ip && validateIP(ip[0])) {
-			ipObj.value = ip[0];
+		ip = xmlRequest.responseText;
+		if (ip && validateIP(ip)) {
+			ipObj.value = ip;
 			ipObj.select();
 		} else {
 			displayMsg('invalidip');
@@ -201,15 +215,10 @@ function parseIP() {
 /* begin: version checking functions */
 function doCheckVersion() {
 	// figure out whether we have a 'net connection
-//	var ip = window.widget.system('ifconfig | grep "inet " | grep -v 127.0.0.1 | cut -d\\  -f2',null).outputString;
 	var msg;
 	
-//	if (!!ip) {
-		checkVersion('iplocator');
-		msg = 'Checking for Updates&#8230;';
-/*	} else {
-		msg = 'Error: '+version_errors['-2'];
-	}*/
+	checkVersion('iplocator');
+	msg = 'Checking for Updates&#8230;';
 	
 	var vrsnObj = getObj('versioning');
 	vrsnObj.innerHTML = msg;
@@ -228,7 +237,7 @@ function returnVersion(vrsn) {
 		if (vrsn.indexOf('-') > -1) { // error
 			msg = 'Error: '+version_errors[vrsn];
 		} else { // new version available
-			msg = '<span class="link" onclick="gotoURL(\'http://andrew.hedges.name/widgets/#makeapass\');vrsnMsgBlank();">New version available.<\/span>';
+			msg = '<span class="link" onclick="gotoURL(\'http://andrew.hedges.name/widgets/#iplocator\');vrsnMsgBlank();">New version available.<\/span>';
 		}
 	}
 	
@@ -307,12 +316,3 @@ function getObj(id) {
 
 // EVENT HANDLERS
 window.onload = init;
-
-// DEBUGGING FUNCTION
-function writeDebug(s) {
-	if (window.widget) {
-		alert(s);
-	} else {
-		document.getElementById('debug').innerHTML += s + '<br \/>\n';
-	}
-}
