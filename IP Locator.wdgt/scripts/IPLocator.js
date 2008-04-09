@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2005. All Rights reserved.
+Copyright (c) 2005 - 2008. All Rights reserved.
 
 If you use this script, please email me and let me know, thanks!
 
@@ -17,7 +17,6 @@ http://andrew.hedges.name/resume/
 var ipObj, msgObj, countryObj, flagObj, cityObj, currencyObj, ipURL, locatorURL, locationHTML, currentMsg, ipRgxp, hnRgxp, flags, msgs;
 
 ipURL		= 'http://www.whatismyip.com/automation/n09230945.asp';
-//locatorURL	= 'http://www.dnsstuff.com/tools/widget.ch?ip=';
 locatorURL	= 'http://api.hostip.info/?position=true&ip=';
 
 // IP and hostname regular expressions
@@ -83,9 +82,6 @@ function locateIt() {
 }
 
 function loadXML(url) {
-
-	DEBUG.writeDebug('loadXML: url = ' + url);
-
 	xmlRequest = new XMLHttpRequest();
 	xmlRequest.onreadystatechange = processRequestChange;
 	xmlRequest.url = url;
@@ -109,34 +105,6 @@ function processRequestChange() {
 		}
 	}
 }
-
-/*
-<?xml version="1.0" encoding="ISO-8859-1" ?>\n<HostipLookupResultSet version="1.0.0" xmlns="http://www.hostip.info/api" xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.hostip.info/api/hostip-1.0.0.xsd">\n <gml:description>This is the Hostip Lookup Service</gml:description>\n <gml:name>hostip</gml:name>\n <gml:boundedBy>\n  <gml:Null>inapplicable</gml:Null>\n </gml:boundedBy>\n <gml:featureMember>\n  <Hostip>\n   <gml:name>(Unknown City?)</gml:name>\n   <countryName>(Unknown Country?)</countryName>\n   <countryAbbrev>XX</countryAbbrev>\n   <!-- Co-ordinates are unavailable -->\n  </Hostip>\n </gml:featureMember>\n</HostipLookupResultSet>
-
-<?xml version="1.0" encoding="ISO-8859-1" ?>
-<HostipLookupResultSet version="1.0.0" xmlns="http://www.hostip.info/api" xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.hostip.info/api/hostip-1.0.0.xsd">
- <gml:description>This is the Hostip Lookup Service</gml:description>
- <gml:name>hostip</gml:name>
- <gml:boundedBy>
-  <gml:Null>inapplicable</gml:Null>
- </gml:boundedBy>
- <gml:featureMember>
-  <Hostip>
-   <gml:name>Caracas</gml:name>
-   <countryName>VENEZUELA</countryName>
-   <countryAbbrev>VE</countryAbbrev>
-   <!-- Co-ordinates are available as lng,lat -->
-   <ipLocation>
-    <gml:PointProperty>
-     <gml:Point srsName="http://www.opengis.net/gml/srs/epsg.xml#4326">
-      <gml:coordinates>-67.0333,10.4667</gml:coordinates>
-     </gml:Point>
-    </gml:PointProperty>
-   </ipLocation>
-  </Hostip>
- </gml:featureMember>
-</HostipLookupResultSet>
-*/
 
 function parseLocation() {
 	var regexs, coordsNA, unknownCountry, txt, country, countrycode, city, latitude, longitude, flag;
@@ -214,13 +182,12 @@ function parseIP() {
 /*************************************/
 /* begin: version checking functions */
 function doCheckVersion() {
-	// figure out whether we have a 'net connection
-	var msg;
+	var msg, vrsnObj;
 	
 	checkVersion('iplocator');
 	msg = 'Checking for Updates&#8230;';
 	
-	var vrsnObj = getObj('versioning');
+	vrsnObj = getObj('versioning');
 	vrsnObj.innerHTML = msg;
 }
 
@@ -231,7 +198,7 @@ function returnVersion(vrsn) {
 	var thisvrsn = '1.5';
 	var msg;
 	
-	if (thisvrsn == vrsn) { // up-to-date
+	if (thisvrsn >= vrsn) { // up-to-date
 		msg = 'This widget is up-to-date.';
 	} else {
 		if (vrsn.indexOf('-') > -1) { // error
@@ -277,17 +244,9 @@ function gotoURL(url) {
 	}
 }
 
-// /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-
-
 function validateIP(ip) {
-//	alert(ip);
-	
-	var isValid = true;
-	
-	// validate the IP address
-//	var ipRgxp = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
-//	var hnRgxp = /^((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+	var isValid;
+	isValid = true;
 	
 	if (ipRgxp.test(ip)) {
 		var parts = ip.split(".");

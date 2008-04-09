@@ -40,7 +40,7 @@ function checkVersion(wdgtname) {
 function processChange() {
 	if (null == httpRequest.readyState) return;
 	if (httpRequest.readyState == 4) {
-		if (httpRequest.status == 200) {		
+		if (httpRequest.status == 200) {
 			if (null == httpRequest.responseText) {
 				wdgtversion = '-3'; // empty page
 			} else {
