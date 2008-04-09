@@ -43,7 +43,7 @@ msgs["nomatch"]			= '<div class="error">Error: No match<\/div>';
 
 nomatchlink = {
 	start : '<span class="link" onclick="gotoURL(\'http://www.hostip.info/correct.php?fd=correctFinished.html&spip=',
-	end   : '\');">Add address to HostIP.info</span>'
+	end   : '\');">Add location to HostIP.info</span>'
 };
 
 function init() {
