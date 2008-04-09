@@ -1,0 +1,187 @@
+#front {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 228px;
+	height: 118px;
+	font: 10px/1.2em "Lucida Grande", Sans-Serif;
+	background: url(../Default.png);
+}
+
+#back {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 228px;
+	height: 118px;
+	font: bold 10px/1.2em "Lucida Grande", Sans-Serif;
+	color: white;
+	text-shadow: black 0 0 3px;
+/*	background: url(../images/backside.png);*/
+	background: url(../Default.png);
+	display: none;
+}
+
+#container {
+	position: absolute;
+	top: 3px;
+	left: 4px;
+	width: 200px;
+	height: 43px;
+	color: black;
+}
+
+form {
+	margin: 0;
+}
+
+#ip {
+	position: absolute;
+	top: 8px;
+	left: 16px;
+	width: 196px;
+	opacity: 0.7;
+}
+
+#submit {
+	position: absolute;
+	top: 8px;
+	right: 10px;
+	display: none;
+}
+
+#button {
+	position: absolute;
+	top: 3px;
+	right: 6px;
+	width: 60px;
+	height: 19px;
+}
+
+#result {
+	position: absolute;
+	top: 36px;
+	left: 18px;
+	width: 184px;
+	height: 34px;
+	overflow: hidden;
+	font-size: 9px;
+	font-weight: bold;
+	line-height: 11px;
+	background: black;
+	padding: 2px 3px;
+	border: solid 1px #666;
+	border-top: solid 1px #333;
+	border-bottom: solid 1px #ccc;
+	color: #ccc;
+}
+
+#flag {
+	float: right;
+	padding: 1px 0 0 0;
+}
+
+#msg {
+	position: absolute;
+	top: 82px;
+	left: 18px;
+	width: 184px;
+	height: 43px;
+	font-size: 9px;
+	font-weight: bold;
+	height: 10px;
+	padding-left: 2px;
+	background: black;
+	padding: 1px 3px 2px 3px;
+	border: solid 1px #666;
+	border-top: solid 1px #333;
+	border-bottom: solid 1px #ccc;
+	color: #ccc;
+}
+
+#tagline {
+	position: absolute;
+	top: 16px;
+	left: 22px;
+	width: 185px;
+}
+
+#copyright {
+	position: absolute;
+	bottom: 20px;
+	left: 20px;
+	width: 185px;
+	font-size: 9px;
+	text-align: center;
+}
+
+.link { text-decoration: none }
+.link:hover { text-decoration: underline }
+
+#debug {
+	position: absolute;
+	top: 190px;
+	left: 10px;
+	border: solid 1px black;
+	background-color: #ccc;
+	color: black;
+	padding: 0.4em;
+	margin-top: 1em;
+	width: 700px;
+	font: 10pt/12pt "Lucida Grande", Sans-Serif;
+}
+
+.snap {
+	position: absolute;
+	bottom: 22px;
+	right: 33px;
+	width: 13px;
+	height: 13px;
+}
+
+#snap {
+	opacity: 0;
+	background: url(../images/snapback_arrow.png) no-repeat top left;
+	z-index: 8000;
+}
+
+#snaprollie {
+	display: none;
+	opacity: 0.33;
+	background: url(file:///System/Library/WidgetResources/ibutton/white_rollie.png) no-repeat top left;
+	z-index: 7999;
+}
+
+/****************/
+/* APPLE STYLES */
+
+.flip {
+	position: absolute;
+	bottom: 22px;
+	right: 19px;
+	width: 13px;
+	height: 13px;
+}
+
+#flip {
+	opacity: 0;
+	background: url(file:///System/Library/WidgetResources/ibutton/white_i.png) no-repeat top left;
+	z-index: 8000;
+}
+
+#fliprollie {
+	display: none;
+	opacity: 0.33;
+	background: url(file:///System/Library/WidgetResources/ibutton/white_rollie.png) no-repeat top left;
+	z-index: 7999;
+}
+
+#back {
+	display: none;
+}
+
+#doneButton {
+	position: absolute;
+	top: 46px;
+	left: 90px;
+}
