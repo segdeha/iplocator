@@ -14,7 +14,7 @@ http://andrew.hedges.name/resume/
 */
 
 // declare global variables
-var ipObj, msgObj, countryObj, flagObj, cityObj, currencyObj, ipURL, locatorURL, locationHTML, currentMsg, ipRgxp, hnRgxp, flags, msgs;
+var IP, ipObj, msgObj, countryObj, flagObj, cityObj, currencyObj, ipURL, locatorURL, locationHTML, currentMsg, ipRgxp, hnRgxp, flags, msgs, nomatchlink;
 
 ipURL		= 'http://www.whatismyip.com/automation/n09230945.asp';
 locatorURL	= 'http://api.hostip.info/?position=true&ip=';
@@ -41,6 +41,11 @@ msgs["invalidip"]		= '<div class="error">Error: Invalid address<\/div>';
 msgs["error"]			= '<div class="error">Error: Unknown Error<\/div>';
 msgs["nomatch"]			= '<div class="error">Error: No match<\/div>';
 
+nomatchlink = {
+	start : '<span class="link" onclick="gotoURL(\'http://www.hostip.info/correct.php?fd=correctFinished.html&spip=',
+	end   : '\');">Add address to HostIP.info</span>'
+};
+
 function init() {
 	var button;
 	
@@ -60,7 +65,7 @@ function init() {
 }
 
 function locateIt() {
-	var ip, isValid, url;
+	var isValid, url;
 	
 	displayMsg('loading');
 	
@@ -69,11 +74,11 @@ function locateIt() {
 	flagObj.src          = 'images/flags/-.gif';
 	googleObj.innerHTML  = '';
 	
-	ip = ipObj.value;
-	isValid = validateIP(ip);
+	IP = ipObj.value;
+	isValid = validateIP(IP);
 	
 	if (isValid) {
-		url = locatorURL + ip;
+		url = locatorURL + IP;
 		loadXML(url);
 	} else {
 		// not a valid IP address
@@ -128,6 +133,7 @@ function parseLocation() {
 		if (txt.indexOf(unknownCountry) > -1) {
 			// error
 			displayMsg('nomatch');
+			googleObj.innerHTML = nomatchlink.start + IP + nomatchlink.end;
 		} else {
 			country = txt.match(regexs.country)[1];
 			countrycode = txt.match(regexs.countrycode)[1];
