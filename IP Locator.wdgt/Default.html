@@ -10,33 +10,39 @@
 	<script type="text/javascript" charset="utf-8" src="/System/Library/WidgetResources/AppleClasses/AppleButton.js"></script>
 	<script type="text/javascript" charset="utf-8" src="scripts/Apple.js"></script>
 	<script type="text/javascript" charset="utf-8" src="scripts/debug.js"></script>
+	<script type="text/javascript" charset="utf-8" src="scripts/CountryCodes.js"></script>
 	<script type="text/javascript" charset="utf-8" src="scripts/IPLocator.js"></script>
 	<script type="text/javascript" charset="utf-8" src="scripts/version_checker.js"></script>
 </head>
 <body>
 
 <div id="front" onmousemove="mousemove(event)" onmouseout="mouseexit(event)">
-	<form onsubmit="locateIt();return false;">
+	<form onsubmit="IPLOCATOR.locate();return false;">
 		<input type="search" id="ip" value="" maxlength="255" placeholder="Enter an IP address" results="10" autosave="iplocator"/>
 		<div id="msg"></div>
 	</form>
 	<div id="result">
 		Country: <span id="country"></span> <img id="flag" src="images/flags/-.gif" alt=""><br>
 		City: <span id="city"></span><br>
-		<span id="google-map"></span><br>
+		<span id="link"></span><br>
 	</div>
-	<div class="flip" id="flip" onclick="showBack(event)" onmouseover="enterflip(event);changeMsg('flip')" onmouseout="exitflip(event);changeMsgBack()"></div>
+	<div class="flip" id="flip"></div>
 	<div class="flip" id="fliprollie"></div>
-	<div class="snap" id="snap" onclick="loadXML(ipURL);" onmouseover="entersnap(event);changeMsg('snap')" onmouseout="exitsnap(event);changeMsgBack()"></div>
+	<div class="snap" id="snap"></div>
 	<div class="snap" id="snaprollie"></div>
 </div>
 
 <div id="back">
 	<div id="tagline">
-		IP Locator 1.5, by <span class="link" onclick="gotoURL('http://andrew.hedges.name/widgets/')">Andrew Hedges</span> using the <span class="link" onclick="gotoURL('http://www.hostip.info/')">HostIP.info</span> API.
+		IP Locator 1.6, by <span class="link" onclick="gotoURL('http://andrew.hedges.name/widgets/')">Andrew Hedges</span><br>
+		Use:
+		<select id="apiPref" onchange="IPLOCATOR.setApi(this);" style="font-size: 10px;">
+			<option value="hostip">HostIP.info</option>
+			<option value="geoio">GEO I/O</option>
+		</select>
 	</div>
 	<div id="copyright">
-		Widget &copy; 2005&#8211;2008 <span class="link" onclick="gotoURL('http://andrew.hedges.name/widgets/')">Andrew Hedges</span>.<br>
+		Widget &copy; 2005&#8211;2008 <span class="link" onclick="WW.openURL('http://andrew.hedges.name/widgets/')">Andrew Hedges</span>.<br>
 		<span class="link" id="versioning" onclick="doCheckVersion();">Check for updates.</span>
 	</div>
 	<div id="doneButton" onclick="hideBack();vrsnLinkRestore();"></div> 
