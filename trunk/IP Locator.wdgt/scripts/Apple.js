@@ -11,7 +11,9 @@ function showBack() {
 	if (window.widget) widget.prepareForTransition("ToBack");
 	front.style.display="none";
 	back.style.display="block";
-	if (window.widget) setTimeout ("widget.performTransition()", 0);
+	if (window.widget) setTimeout (function () {
+		widget.performTransition();
+	}, 0);
 }
 
 function hideBack() {
@@ -20,7 +22,10 @@ function hideBack() {
 	if (window.widget) widget.prepareForTransition("ToFront");
 	back.style.display="none";
 	front.style.display="block";
-	if (window.widget) setTimeout ("widget.performTransition()", 0);
+	if (window.widget) setTimeout (function () {
+		widget.performTransition();
+		IPLOCATOR.focus();
+	}, 0);
 }
 
 var flipShown = false;
