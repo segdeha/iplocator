@@ -176,7 +176,7 @@ IPLOCATOR = (function () {
 	_displayValues = function (values) {
 		var flag;
 		flag = values.countrycode.toLowerCase();
-		_elements.country.innerHTML = values.country.toTitleCase();
+		_elements.country.innerHTML = (values.country)? values.country.toTitleCase() : '';
 		if (values.countrycode) {
 			_elements.country.innerHTML += ' (' + values.countrycode + ')';
 			if (_flags.indexOf(' ' + flag + ' ') > -1) {
@@ -190,7 +190,7 @@ IPLOCATOR = (function () {
 		
 		if (values.latitude && values.longitude) {
 			_elements.link.innerHTML = '<span class="link" onclick="WW.openURL(\'http://maps.google.com/maps?q=' + values.latitude + ',' + values.longitude + '\');">Go here on Google Maps</span>';
-		} else if (false !== values.city && HOSTIP === api) {
+		} else if (false !== values.city && HOSTIP === _api) {
 			_elements.link.innerHTML = _noMatchLink.replace(/\%s/, _elements.ip.value);
 		} else {
 			_elements.link.innerHTML = '';
