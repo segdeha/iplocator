@@ -177,7 +177,7 @@ IPLOCATOR = (function () {
 		var flag;
 		flag = values.countrycode.toLowerCase();
 		_elements.country.innerHTML = (values.country)? values.country.toTitleCase() : '';
-		if (values.countrycode) {
+		if (UNKNOWNCC !== values.countrycode) {
 			_elements.country.innerHTML += ' (' + values.countrycode + ')';
 			if (_flags.indexOf(' ' + flag + ' ') > -1) {
 				_elements.flag.src = 'images/flags/' + flag + '.gif';
